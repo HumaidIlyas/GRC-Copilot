@@ -16,7 +16,7 @@ substitutions:
   _BACKEND_SVC: grc-copilot-api
   _FRONTEND_SVC: grc-copilot-ui
   _GCP_PROJECT: ${PROJECT_ID}
-  _HASH: replace-after-first-deploy  # fill in after Step 6 — the hash from Cloud Run URL
+  _HASH: "20699396472"
 
 steps:
   # ── Backend ──────────────────────────────────────────────────────────────────
@@ -50,9 +50,10 @@ steps:
       - --region=${_REGION}
       - --platform=managed
       - --allow-unauthenticated
-      - --set-env-vars=LLM_VENDOR=vertex,GCP_PROJECT_ID=${_GCP_PROJECT},GCP_REGION=${_REGION},FRONTEND_URL=https://${_FRONTEND_SVC}-${_HASH}-uc.a.run.app
+      - --set-env-vars=LLM_VENDOR=vertex,GCP_PROJECT_ID=${_GCP_PROJECT},GCP_REGION=${_REGION},FRONTEND_URL=https://${_FRONTEND_SVC}-${_HASH}.${_REGION}.run.app
       - --set-secrets=ANTHROPIC_API_KEY=anthropic-api-key:latest,NVD_API_KEY=nvd-api-key:latest,DATABASE_URL=db-url:latest
       - --service-account=grc-copilot-sa@${_GCP_PROJECT}.iam.gserviceaccount.com
+      - --add-cloudsql-instances=${_GCP_PROJECT}:${_REGION}:grc-copilot-db
 
   # ── Frontend ─────────────────────────────────────────────────────────────────
   - name: "gcr.io/cloud-builders/docker"
@@ -64,7 +65,7 @@ steps:
       - -t
       - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:latest"
       - --build-arg
-      - NEXT_PUBLIC_API_URL=https://${_BACKEND_SVC}-${_HASH}-uc.a.run.app/api
+      - NEXT_PUBLIC_API_URL=https://${_BACKEND_SVC}-${_HASH}.${_REGION}.run.app/api
       - --build-arg
       - NEXT_PUBLIC_FIREBASE_PROJECT_ID=${_GCP_PROJECT}
       - --build-arg
@@ -93,6 +94,7 @@ steps:
       - --allow-unauthenticated
       - --set-env-vars=NEXT_PUBLIC_FIREBASE_API_KEY=$$FIREBASE_API_KEY
       - --set-secrets=SESSION_SECRET=session-secret:latest,FIREBASE_API_KEY=firebase-api-key:latest
+      - --service-account=grc-copilot-sa@${_GCP_PROJECT}.iam.gserviceaccount.com
 
 images:
   - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/backend:$COMMIT_SHA"

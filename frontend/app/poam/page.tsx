@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api, type Project, type PoamItem } from "@/lib/api";
 
@@ -16,7 +16,7 @@ const STATUS_COLORS: Record<string, string> = {
   closed:      "bg-green-50 text-green-600",
 };
 
-export default function PoamPage() {
+function PoamPageInner() {
   const params = useSearchParams();
   const projectId = params.get("project") ?? "";
 
@@ -256,6 +256,14 @@ export default function PoamPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PoamPage() {
+  return (
+    <Suspense>
+      <PoamPageInner />
+    </Suspense>
   );
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api, type Project, type GapRow } from "@/lib/api";
 
@@ -22,7 +22,7 @@ const STATUS_BAR: Record<string, string> = {
   "Planned":              "bg-purple-400",
 };
 
-export default function GapPage() {
+function GapPageInner() {
   const params = useSearchParams();
   const projectId = params.get("project") ?? "";
 
@@ -275,5 +275,13 @@ export default function GapPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function GapPage() {
+  return (
+    <Suspense>
+      <GapPageInner />
+    </Suspense>
   );
 }

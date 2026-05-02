@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api, type Project, type OdpRow, type OdpSummary } from "@/lib/api";
 
-export default function ODPPage() {
+function ODPPageInner() {
   const params = useSearchParams();
   const projectId = params.get("project") ?? "";
 
@@ -226,5 +226,13 @@ export default function ODPPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ODPPage() {
+  return (
+    <Suspense>
+      <ODPPageInner />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api, type Project, type Control } from "@/lib/api";
 
@@ -10,7 +10,7 @@ const STATUS_COLORS: Record<string, string> = {
   approved: "bg-green-100 text-green-700",
 };
 
-export default function SSPPage() {
+function SSPPageInner() {
   const params = useSearchParams();
   const projectId = params.get("project") ?? "";
 
@@ -230,5 +230,13 @@ export default function SSPPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SSPPage() {
+  return (
+    <Suspense>
+      <SSPPageInner />
+    </Suspense>
   );
 }
