@@ -25,8 +25,7 @@ export default function LoginPage() {
       })
       if (!res.ok) throw new Error("Session creation failed")
 
-      router.push("/")
-      router.refresh()
+      window.location.href = "/"
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign-in failed. Try again.")
     } finally {
