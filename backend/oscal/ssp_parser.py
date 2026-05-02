@@ -79,6 +79,13 @@ def fetch_and_parse(source: str) -> dict:
 
 # ── Internal parsers ──────────────────────────────────────────────────────────
 
+def _iter(obj) -> list:
+    """Return iterable values from either a list or an OSCAL 1.0-style id-keyed dict."""
+    if isinstance(obj, dict):
+        return list(obj.values())
+    return obj if isinstance(obj, list) else []
+
+
 def _parse_metadata(ssp: dict) -> dict:
     meta = ssp.get("metadata", {})
     chars = ssp.get("system-characteristics", {})
@@ -103,13 +110,13 @@ def _parse_components(ssp: dict) -> list[dict]:
     impl = ssp.get("system-implementation", {})
     components = []
 
-    for comp in impl.get("components", []):
-        comp_type = comp.get("type", "").lower()
+    for comp in _iter(impl.get("components", [])):
+        comp_type = (comp.get("type") or comp.get("component-type", "")).lower()
 
         # Collect CPE identifiers from props
         cpes = [
-            p["value"] for p in comp.get("props", [])
-            if p.get("name") in ("software-identifier", "cpe") and p.get("value", "").startswith("cpe")
+            p["value"] for p in _iter(comp.get("props", []))
+            if isinstance(p, dict) and p.get("name") in ("software-identifier", "cpe") and p.get("value", "").startswith("cpe")
         ]
 
         # Use title/description as keyword fallback for NVD if no CPE
@@ -142,14 +149,14 @@ def _parse_control_implementations(ssp: dict) -> dict[str, str]:
         texts: list[str] = []
 
         # Direct by-components on the requirement
-        for bycomp in req.get("by-components", []):
+        for bycomp in _iter(req.get("by-components", [])):
             desc = bycomp.get("description", "").strip()
             if desc:
                 texts.append(desc)
 
-        # Nested statements → by-components
-        for stmt in req.get("statements", []):
-            for bycomp in stmt.get("by-components", []):
+        # Nested statements → by-components (statements can be list or id-keyed dict)
+        for stmt in _iter(req.get("statements", [])):
+            for bycomp in _iter(stmt.get("by-components", [])):
                 desc = bycomp.get("description", "").strip()
                 if desc:
                     texts.append(desc)
@@ -185,22 +192,22 @@ def _parse_control_statuses(ssp: dict) -> dict[str, str]:
         if status_obj:
             status = status_obj.get("state", "").lower()
 
-        # 2. FedRAMP props pattern (ns: https://fedramp.gov/ns/oscal)
+        # 2. FedRAMP props/annotations pattern (ns: https://fedramp.gov/ns/oscal)
         if not status:
-            for prop in req.get("props", []):
-                if prop.get("name") == "implementation-status":
+            for prop in _iter(req.get("props", [])) + _iter(req.get("annotations", [])):
+                if isinstance(prop, dict) and prop.get("name") == "implementation-status":
                     status = prop.get("value", "").lower()
                     break
 
         # 3. by-components level
         if not status:
-            for bycomp in req.get("by-components", []):
+            for bycomp in _iter(req.get("by-components", [])):
                 status_obj = bycomp.get("implementation-status", {})
                 if status_obj:
                     status = status_obj.get("state", "").lower()
                     break
-                for prop in bycomp.get("props", []):
-                    if prop.get("name") == "implementation-status":
+                for prop in _iter(bycomp.get("props", [])) + _iter(bycomp.get("annotations", [])):
+                    if isinstance(prop, dict) and prop.get("name") == "implementation-status":
                         status = prop.get("value", "").lower()
                         break
                 if status:
