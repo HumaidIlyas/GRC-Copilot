@@ -50,7 +50,7 @@ steps:
       - --region=${_REGION}
       - --platform=managed
       - --allow-unauthenticated
-      - --set-env-vars=LLM_VENDOR=vertex,GCP_PROJECT_ID=${_GCP_PROJECT},GCP_REGION=us-east5,FRONTEND_URL=https://${_FRONTEND_SVC}-${_HASH}.${_REGION}.run.app
+      - --set-env-vars=LLM_VENDOR=anthropic,GCP_PROJECT_ID=${_GCP_PROJECT},GCP_REGION=us-east5,FRONTEND_URL=https://${_FRONTEND_SVC}-${_HASH}.${_REGION}.run.app
       - --set-secrets=ANTHROPIC_API_KEY=anthropic-api-key:latest,NVD_API_KEY=nvd-api-key:latest,DATABASE_URL=db-url:latest
       - --service-account=grc-copilot-sa@${_GCP_PROJECT}.iam.gserviceaccount.com
       - --add-cloudsql-instances=${_GCP_PROJECT}:${_REGION}:grc-copilot-db
