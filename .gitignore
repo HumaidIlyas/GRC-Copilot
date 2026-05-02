@@ -1,0 +1,18 @@
+# Backend
+backend/venv/
+backend/.env
+backend/grc_copilot.db
+backend/oscal/*.json
+
+# OSCAL catalog (root level copy)
+NIST_SP-800-53_rev5_catalog.json
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# General
+.DS_Store
+__pycache__/
+*.pyc

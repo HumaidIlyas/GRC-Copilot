@@ -1,0 +1,102 @@
+# Cloud Build CI/CD pipeline
+# Triggers on push to main branch.
+# Builds backend + frontend containers, pushes to Artifact Registry,
+# then deploys to Cloud Run.
+#
+# Required substitutions (set in Cloud Build trigger):
+#   _REGION          e.g. us-central1
+#   _REPO            Artifact Registry repo name  e.g. grc-copilot
+#   _BACKEND_SVC     Cloud Run service name       e.g. grc-copilot-api
+#   _FRONTEND_SVC    Cloud Run service name       e.g. grc-copilot-ui
+#   _GCP_PROJECT     GCP project ID
+
+substitutions:
+  _REGION: us-central1
+  _REPO: grc-copilot
+  _BACKEND_SVC: grc-copilot-api
+  _FRONTEND_SVC: grc-copilot-ui
+  _GCP_PROJECT: ${PROJECT_ID}
+  _HASH: replace-after-first-deploy  # fill in after Step 6 — the hash from Cloud Run URL
+
+steps:
+  # ── Backend ──────────────────────────────────────────────────────────────────
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-backend
+    args:
+      - build
+      - -t
+      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/backend:$COMMIT_SHA"
+      - -t
+      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/backend:latest"
+      - ./backend
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-backend
+    waitFor: [build-backend]
+    args:
+      - push
+      - "--all-tags"
+      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/backend"
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: deploy-backend
+    waitFor: [push-backend]
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - "${_BACKEND_SVC}"
+      - --image=${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/backend:$COMMIT_SHA
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --set-env-vars=LLM_VENDOR=vertex,GCP_PROJECT_ID=${_GCP_PROJECT},GCP_REGION=${_REGION},FRONTEND_URL=https://${_FRONTEND_SVC}-${_HASH}-uc.a.run.app
+      - --set-secrets=ANTHROPIC_API_KEY=anthropic-api-key:latest,NVD_API_KEY=nvd-api-key:latest,DATABASE_URL=db-url:latest
+      - --service-account=grc-copilot-sa@${_GCP_PROJECT}.iam.gserviceaccount.com
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-frontend
+    args:
+      - build
+      - -t
+      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:$COMMIT_SHA"
+      - -t
+      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:latest"
+      - --build-arg
+      - NEXT_PUBLIC_API_URL=https://${_BACKEND_SVC}-${_HASH}-uc.a.run.app/api
+      - --build-arg
+      - NEXT_PUBLIC_FIREBASE_PROJECT_ID=${_GCP_PROJECT}
+      - --build-arg
+      - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${_GCP_PROJECT}.firebaseapp.com
+      - ./frontend
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-frontend
+    waitFor: [build-frontend]
+    args:
+      - push
+      - "--all-tags"
+      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend"
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: deploy-frontend
+    waitFor: [push-frontend]
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - "${_FRONTEND_SVC}"
+      - --image=${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:$COMMIT_SHA
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --set-env-vars=NEXT_PUBLIC_FIREBASE_API_KEY=$$FIREBASE_API_KEY
+      - --set-secrets=SESSION_SECRET=session-secret:latest,FIREBASE_API_KEY=firebase-api-key:latest
+
+images:
+  - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/backend:$COMMIT_SHA"
+  - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:$COMMIT_SHA"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,16 @@
+.git
+.gitignore
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/venv
+**/node_modules
+**/.next
+**/dist
+**/build
+*.db
+*.sqlite3
+.env
+.env.*
+!.env.example
+**/oscal/*.json
