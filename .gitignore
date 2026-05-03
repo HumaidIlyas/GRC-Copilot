@@ -17,3 +17,4 @@ frontend/.env.local
 __pycache__/
 *.pyc
 *.md
+!README.md
