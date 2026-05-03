@@ -54,7 +54,10 @@ def generate_poam(project_id: str, db: Session = Depends(get_db)):
 
     gaps = (
         db.query(Gap)
-        .filter(Gap.project_id == project_id, Gap.gap_status != "Implemented")
+        .filter(
+            Gap.project_id == project_id,
+            Gap.gap_status.in_(["Not Implemented", "Partially Implemented", "Planned"]),
+        )
         .all()
     )
 
