@@ -191,7 +191,7 @@ def assess_from_ssp(
 
     # Write all results to DB
     results = []
-    for ctrl, _, relevant_cves, _ in work_items:
+    for ctrl, _, _, relevant_cves, _ in work_items:
         ctrl_id = ctrl["id"]
         result = assessment_results[ctrl_id]
         gap = Gap(
