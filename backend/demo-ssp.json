@@ -29,88 +29,220 @@
       "description": "NIST 800-53 Rev 5 Moderate Baseline",
       "implemented-requirements": [
         {
-          "uuid": "req-ac-1", "control-id": "ac-1",
+          "uuid": "req-ac-1",
+          "control-id": "ac-1",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "ac-1_smt", "uuid": "stmt-ac-1",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-ac-1",
-              "description": "The organization has established, documented, and disseminated an Access Control Policy that addresses purpose, scope, roles, responsibilities, management commitment, coordination, and compliance. The policy is reviewed and updated annually. Procedures are documented in the System Security Plan and Access Control SOP, reviewed semi-annually." }]}]}
+          "statements": [
+            {
+              "statement-id": "ac-1_smt",
+              "uuid": "stmt-ac-1",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-ac-1",
+                  "description": "The organization has established, documented, and disseminated an Access Control Policy that addresses purpose, scope, roles, responsibilities, management commitment, coordination, and compliance. The policy is reviewed and updated annually. Procedures are documented in the System Security Plan and Access Control SOP, reviewed semi-annually."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-ac-2", "control-id": "ac-2",
+          "uuid": "req-ac-2",
+          "control-id": "ac-2",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "ac-2_smt", "uuid": "stmt-ac-2",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-ac-2",
-              "description": "Account management is performed using automated tooling. All accounts are approved by data owners and the ISSO. Accounts are reviewed quarterly. Shared accounts are prohibited. Service accounts are inventoried and reviewed annually. Inactive accounts are disabled after 35 days of inactivity via automated policy. Account creation, modification, and termination requests are tracked via the agency ticketing system." }]}]}
+          "statements": [
+            {
+              "statement-id": "ac-2_smt",
+              "uuid": "stmt-ac-2",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-ac-2",
+                  "description": "Account management is performed using automated tooling. All accounts are approved by data owners and the ISSO. Accounts are reviewed quarterly. Shared accounts are prohibited. Service accounts are inventoried and reviewed annually. Inactive accounts are disabled after 35 days of inactivity via automated policy. Account creation, modification, and termination requests are tracked via the agency ticketing system."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-ac-3", "control-id": "ac-3",
+          "uuid": "req-ac-3",
+          "control-id": "ac-3",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "ac-3_smt", "uuid": "stmt-ac-3",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-ac-3",
-              "description": "Access enforcement is implemented through role-based access control (RBAC). The system enforces approved authorizations for logical access to information and system resources in accordance with applicable access control policies. Least privilege is enforced at the application and OS layer. All access is denied by default; explicit grants are required." }]}]}
+          "statements": [
+            {
+              "statement-id": "ac-3_smt",
+              "uuid": "stmt-ac-3",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-ac-3",
+                  "description": "Access enforcement is implemented through role-based access control (RBAC). The system enforces approved authorizations for logical access to information and system resources in accordance with applicable access control policies. Least privilege is enforced at the application and OS layer. All access is denied by default; explicit grants are required."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-ac-6", "control-id": "ac-6",
+          "uuid": "req-ac-6",
+          "control-id": "ac-6",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "ac-6_smt", "uuid": "stmt-ac-6",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-ac-6",
-              "description": "Least privilege is enforced system-wide. Administrative privileges are restricted to named individuals with documented justification. Privileged access requires MFA. Users are granted only the permissions necessary to perform their assigned duties. Privileged commands are logged and reviewed monthly by the ISSO." }]}]}
+          "statements": [
+            {
+              "statement-id": "ac-6_smt",
+              "uuid": "stmt-ac-6",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-ac-6",
+                  "description": "Least privilege is enforced system-wide. Administrative privileges are restricted to named individuals with documented justification. Privileged access requires MFA. Users are granted only the permissions necessary to perform their assigned duties. Privileged commands are logged and reviewed monthly by the ISSO."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-ac-7", "control-id": "ac-7",
+          "uuid": "req-ac-7",
+          "control-id": "ac-7",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "ac-7_smt", "uuid": "stmt-ac-7",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-ac-7",
-              "description": "The system enforces a limit of 3 consecutive invalid login attempts. After exceeding this limit the account is locked for 30 minutes before automatic unlock or until an administrator unlocks it. Users are notified of the lockout. Lockout events are logged and trigger an alert to the security team." }]}]}
+          "statements": [
+            {
+              "statement-id": "ac-7_smt",
+              "uuid": "stmt-ac-7",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-ac-7",
+                  "description": "The system enforces a limit of 3 consecutive invalid login attempts. After exceeding this limit the account is locked for 30 minutes before automatic unlock or until an administrator unlocks it. Users are notified of the lockout. Lockout events are logged and trigger an alert to the security team."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-ac-11", "control-id": "ac-11",
+          "uuid": "req-ac-11",
+          "control-id": "ac-11",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "ac-11_smt", "uuid": "stmt-ac-11",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-ac-11",
-              "description": "Session lock is enforced after 15 minutes of inactivity. The session lock conceals previously visible information via a screen saver. Users must re-authenticate to resume activity. This is enforced at the OS level via Group Policy and at the application level via session timeout configuration." }]}]}
+          "statements": [
+            {
+              "statement-id": "ac-11_smt",
+              "uuid": "stmt-ac-11",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-ac-11",
+                  "description": "Session lock is enforced after 15 minutes of inactivity. The session lock conceals previously visible information via a screen saver. Users must re-authenticate to resume activity. This is enforced at the OS level via Group Policy and at the application level via session timeout configuration."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-au-2", "control-id": "au-2",
+          "uuid": "req-au-2",
+          "control-id": "au-2",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "au-2_smt", "uuid": "stmt-au-2",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-au-2",
-              "description": "The system audits the following event types: logon/logoff, account management, object access, policy change, privilege use, process tracking, and system events. Auditable events were determined in coordination with the ISSO and legal counsel. The audit event list is reviewed annually and updated to reflect changes in threat landscape or regulatory requirements." }]}]}
+          "statements": [
+            {
+              "statement-id": "au-2_smt",
+              "uuid": "stmt-au-2",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-au-2",
+                  "description": "The system audits the following event types: logon/logoff, account management, object access, policy change, privilege use, process tracking, and system events. Auditable events were determined in coordination with the ISSO and legal counsel. The audit event list is reviewed annually and updated to reflect changes in threat landscape or regulatory requirements."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-au-9", "control-id": "au-9",
+          "uuid": "req-au-9",
+          "control-id": "au-9",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "au-9_smt", "uuid": "stmt-au-9",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-au-9",
-              "description": "Audit logs are protected from unauthorized access and modification. Logs are written to a dedicated SIEM with write-once storage. Only the security team has read access to logs; no user has the ability to modify or delete audit records. Log integrity is verified via cryptographic hashing. Alerts are triggered on any attempt to access or modify log infrastructure." }]}]}
+          "statements": [
+            {
+              "statement-id": "au-9_smt",
+              "uuid": "stmt-au-9",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-au-9",
+                  "description": "Audit logs are protected from unauthorized access and modification. Logs are written to a dedicated SIEM with write-once storage. Only the security team has read access to logs; no user has the ability to modify or delete audit records. Log integrity is verified via cryptographic hashing. Alerts are triggered on any attempt to access or modify log infrastructure."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-ia-2", "control-id": "ia-2",
+          "uuid": "req-ia-2",
+          "control-id": "ia-2",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "ia-2_smt", "uuid": "stmt-ia-2",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-ia-2",
-              "description": "Multi-factor authentication is enforced for all user accounts including privileged and non-privileged. MFA uses PIV/CAC cards for federal users and FIDO2 hardware tokens for contractors. Single-factor authentication is not permitted for any system access. MFA is enforced at the identity provider level and cannot be bypassed at the application layer." }]}]}
+          "statements": [
+            {
+              "statement-id": "ia-2_smt",
+              "uuid": "stmt-ia-2",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-ia-2",
+                  "description": "Multi-factor authentication is enforced for all user accounts including privileged and non-privileged. MFA uses PIV/CAC cards for federal users and FIDO2 hardware tokens for contractors. Single-factor authentication is not permitted for any system access. MFA is enforced at the identity provider level and cannot be bypassed at the application layer."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-sc-7", "control-id": "sc-7",
+          "uuid": "req-sc-7",
+          "control-id": "sc-7",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "sc-7_smt", "uuid": "stmt-sc-7",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-sc-7",
-              "description": "The system implements boundary protection via managed interfaces at all external boundaries. A next-generation firewall enforces deny-by-default rules. All ingress and egress traffic is inspected by IDS/IPS. Network segmentation separates production, staging, and management networks. Only explicitly approved ports and protocols are permitted across network boundaries." }]}]}
+          "statements": [
+            {
+              "statement-id": "sc-7_smt",
+              "uuid": "stmt-sc-7",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-sc-7",
+                  "description": "The system implements boundary protection via managed interfaces at all external boundaries. A next-generation firewall enforces deny-by-default rules. All ingress and egress traffic is inspected by IDS/IPS. Network segmentation separates production, staging, and management networks. Only explicitly approved ports and protocols are permitted across network boundaries."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-si-2", "control-id": "si-2",
+          "uuid": "req-si-2",
+          "control-id": "si-2",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "si-2_smt", "uuid": "stmt-si-2",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-si-2",
-              "description": "Flaws are identified via continuous vulnerability scanning using an approved scanner on a weekly basis. Critical and high vulnerabilities are remediated within 30 days, moderate within 90 days, low within 180 days. A patch management process documents remediation actions. Post-patch scanning confirms remediation. Exceptions require ISSO approval and documented risk acceptance." }]}]}
+          "statements": [
+            {
+              "statement-id": "si-2_smt",
+              "uuid": "stmt-si-2",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-si-2",
+                  "description": "Flaws are identified via continuous vulnerability scanning using an approved scanner on a weekly basis. Critical and high vulnerabilities are remediated within 30 days, moderate within 90 days, low within 180 days. A patch management process documents remediation actions. Post-patch scanning confirms remediation. Exceptions require ISSO approval and documented risk acceptance."
+                }
+              ]
+            }
+          ]
         },
         {
-          "uuid": "req-cm-6", "control-id": "cm-6",
+          "uuid": "req-cm-6",
+          "control-id": "cm-6",
           "props": [{ "name": "implementation-status", "ns": "https://fedramp.gov/ns/oscal", "value": "implemented" }],
-          "statements": [{ "statement-id": "cm-6_smt", "uuid": "stmt-cm-6",
-            "by-components": [{ "component-uuid": "comp-001", "uuid": "bc-cm-6",
-              "description": "Security configuration settings are established using DISA STIGs and CIS Benchmarks as baselines. Configuration is enforced via automated configuration management tooling (Ansible). Deviations from baseline require a documented waiver approved by the ISSO. Configuration compliance is verified weekly via automated scanning. Non-compliant configurations trigger automated remediation." }]}]}
+          "statements": [
+            {
+              "statement-id": "cm-6_smt",
+              "uuid": "stmt-cm-6",
+              "by-components": [
+                {
+                  "component-uuid": "comp-001",
+                  "uuid": "bc-cm-6",
+                  "description": "Security configuration settings are established using DISA STIGs and CIS Benchmarks as baselines. Configuration is enforced via automated configuration management tooling (Ansible). Deviations from baseline require a documented waiver approved by the ISSO. Configuration compliance is verified weekly via automated scanning. Non-compliant configurations trigger automated remediation."
+                }
+              ]
+            }
+          ]
         }
       ]
     }
