@@ -37,8 +37,8 @@ MODELS: dict[str, dict[str, str]] = {
         "draft":    "claude-sonnet-4-6@20250514",
     },
     "openai": {
-        "classify": "gpt-4o-mini",
-        "draft":    "gpt-4o",
+        "classify": "gpt-4.1-mini",
+        "draft":    "gpt-4.1",
     },
     "gemini": {
         "classify": "gemini-1.5-flash",

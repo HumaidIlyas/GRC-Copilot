@@ -12,5 +12,5 @@ httpx==0.27.2
 psycopg2-binary==2.9.9
 
 # Optional — only needed if using that vendor (LLM_VENDOR=openai or gemini)
-# openai>=1.40.0
+openai>=1.40.0
 # google-generativeai>=0.8.0
