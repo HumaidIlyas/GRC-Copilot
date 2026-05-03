@@ -58,6 +58,7 @@ steps:
   # ── Frontend ─────────────────────────────────────────────────────────────────
   - name: "gcr.io/cloud-builders/docker"
     id: build-frontend
+    secretEnv: ["FIREBASE_API_KEY"]
     args:
       - build
       - -t
@@ -70,6 +71,8 @@ steps:
       - NEXT_PUBLIC_FIREBASE_PROJECT_ID=${_GCP_PROJECT}
       - --build-arg
       - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${_GCP_PROJECT}.firebaseapp.com
+      - --build-arg
+      - NEXT_PUBLIC_FIREBASE_API_KEY=$$FIREBASE_API_KEY
       - ./frontend
 
   - name: "gcr.io/cloud-builders/docker"
@@ -99,6 +102,11 @@ steps:
 images:
   - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/backend:$COMMIT_SHA"
   - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:$COMMIT_SHA"
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/${_GCP_PROJECT}/secrets/firebase-api-key/versions/latest
+      env: FIREBASE_API_KEY
 
 options:
   logging: CLOUD_LOGGING_ONLY
