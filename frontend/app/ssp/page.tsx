@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { api, type Project, type Control } from "@/lib/api";
+import { api, apiDownload, type Project, type Control } from "@/lib/api";
 
 const STATUS_COLORS: Record<string, string> = {
   draft: "bg-gray-100 text-gray-600",
@@ -102,12 +102,12 @@ function SSPPageInner() {
               >
                 {drafting ? "Drafting..." : controls.length > 0 ? "Re-draft All" : "Draft SSP"}
               </button>
-              <a
-                href={api.exportSSP(selected)}
+              <button
+                onClick={() => apiDownload(`/export/projects/${selected}/ssp`, "ssp.xlsx")}
                 className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700"
               >
                 Export .xlsx
-              </a>
+              </button>
             </>
           )}
         </div>

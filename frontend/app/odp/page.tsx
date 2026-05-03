@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { api, type Project, type OdpRow, type OdpSummary } from "@/lib/api";
+import { api, apiDownload, type Project, type OdpRow, type OdpSummary } from "@/lib/api";
 
 function ODPPageInner() {
   const params = useSearchParams();
@@ -85,9 +85,9 @@ function ODPPageInner() {
               <button onClick={handleInit} disabled={initializing} className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50">
                 {initializing ? "Initializing..." : "Initialize ODPs"}
               </button>
-              <a href={api.exportODP(selected)} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
+              <button onClick={() => apiDownload(`/export/projects/${selected}/odp`, "odp.xlsx")} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
                 Export .xlsx
-              </a>
+              </button>
             </>
           )}
         </div>

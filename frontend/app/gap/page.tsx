@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { api, type Project, type GapRow } from "@/lib/api";
+import { api, apiDownload, type Project, type GapRow } from "@/lib/api";
 
 const STATUS_COLORS: Record<string, string> = {
   "Implemented":          "bg-green-100 text-green-700",
@@ -116,8 +116,8 @@ function GapPageInner() {
         </div>
         {selected && gaps.length > 0 && (
           <div className="flex gap-2">
-            <a href={api.exportGap(selected)} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">Export Gap .xlsx</a>
-            <a href={api.exportEvidence(selected, true)} className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700">Evidence Request .xlsx</a>
+            <button onClick={() => apiDownload(`/export/projects/${selected}/gap`, "gap-assessment.xlsx")} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">Export Gap .xlsx</button>
+            <button onClick={() => apiDownload(`/export/projects/${selected}/evidence-request?gaps_only=true`, "evidence-request.xlsx")} className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700">Evidence Request .xlsx</button>
           </div>
         )}
       </div>

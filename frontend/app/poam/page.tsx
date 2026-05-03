@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { api, type Project, type PoamItem } from "@/lib/api";
+import { api, apiDownload, type Project, type PoamItem } from "@/lib/api";
 
 const RISK_COLORS: Record<string, string> = {
   High:   "bg-red-100 text-red-700",
@@ -105,9 +105,9 @@ function PoamPageInner() {
                 {generating ? "Generating..." : items.length > 0 ? "Re-generate" : "Generate POA&M"}
               </button>
               {items.length > 0 && (
-                <a href={api.exportPoam(selected)} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
+                <button onClick={() => apiDownload(`/export/projects/${selected}/poam`, "poam.xlsx")} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
                   Export .xlsx
-                </a>
+                </button>
               )}
             </>
           )}

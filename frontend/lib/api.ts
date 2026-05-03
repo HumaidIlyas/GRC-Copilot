@@ -3,6 +3,23 @@ import { getIdToken } from "firebase/auth"
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 
+export async function apiDownload(path: string, filename: string): Promise<void> {
+  let authHeader: Record<string, string> = {}
+  if (auth.currentUser) {
+    const token = await getIdToken(auth.currentUser)
+    authHeader = { Authorization: `Bearer ${token}` }
+  }
+  const res = await fetch(`${BASE}${path}`, { headers: authHeader })
+  if (!res.ok) throw new Error("Export failed")
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   let authHeader: Record<string, string> = {}
   if (auth.currentUser) {
