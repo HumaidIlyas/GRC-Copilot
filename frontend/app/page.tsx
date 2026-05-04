@@ -52,9 +52,9 @@ export default function Dashboard() {
       {/* Feature cards */}
       <div className="grid grid-cols-3 gap-4 mb-10">
         {[
-          { num: "01", title: "SSP Assistant",    desc: "Draft control implementation statements",      href: "/ssp" },
-          { num: "02", title: "Gap Assessment",    desc: "Assess your SSP + CVE data against the baseline", href: "/gap" },
-          { num: "03", title: "POA&M Generator",  desc: "Draft plan of action from gap findings",      href: "/poam" },
+          { num: "01", title: "Gap Assessment",   desc: "Assess your SSP + CVE data against the baseline", href: "/gap" },
+          { num: "02", title: "POA&M Generator", desc: "Draft plan of action from gap findings",          href: "/poam" },
+          { num: "03", title: "ODP Tracking",    desc: "Define organization-defined parameters",           href: "/odp" },
         ].map((f) => (
           <Link key={f.href} href={f.href} className="block bg-white border border-[#E5E0D8] rounded-xl p-5 hover:border-[#1A1916] transition-colors group">
             <p className="font-mono text-[10px] tracking-widest text-[#ACA9A4] mb-3 group-hover:text-[#6B6762] transition-colors">{f.num}</p>
@@ -88,7 +88,6 @@ export default function Dashboard() {
               </div>
               <div className="flex gap-2">
                 {[
-                  { label: "SSP",   href: `/ssp?project=${p.id}` },
                   { label: "ODP",   href: `/odp?project=${p.id}` },
                   { label: "Gap",   href: `/gap?project=${p.id}` },
                   { label: "POA&M", href: `/poam?project=${p.id}` },
