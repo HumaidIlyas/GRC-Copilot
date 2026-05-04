@@ -1,0 +1,136 @@
+%%{init: {'flowchart': {'curve': 'stepBefore', 'rankSpacing': 80, 'nodeSpacing': 50}}}%%
+flowchart TB
+
+    DEV["Developer\nLocal Machine"]
+
+    subgraph GH["GitHub - Public Repo"]
+        REPO["HumaidIlyas/GRC-Copilot\nPython + Next.js + cloudbuild.yaml"]
+    end
+
+    subgraph CICD["GCP Cloud Build"]
+        BB["Build Backend Image\ndocker build ./backend"]
+        FB["Build Frontend Image\ndocker build ./frontend\nNEXT_PUBLIC_* baked at build time\nFIREBASE_API_KEY from Secret Manager"]
+        BD["Deploy grc-copilot-api\ngcloud run deploy"]
+        FD["Deploy grc-copilot-ui\ngcloud run deploy"]
+    end
+
+    subgraph SM["Secret Manager"]
+        KEYS["openai-api-key\nfirebase-api-key\ndb-url\nsession-secret\nnvd-api-key"]
+    end
+
+    subgraph AR["Artifact Registry"]
+        IMGS["backend:COMMIT_SHA\nfrontend:COMMIT_SHA"]
+    end
+
+    subgraph FBAUTH["Firebase Auth"]
+        GAUTH["Google OAuth 2.0\nAuthorized Domain: *.run.app"]
+        FTOKEN["Firebase ID Token\nJWT - 1hr expiry"]
+    end
+
+    subgraph CLOUDRUN["Cloud Run - us-central1 - Scale to Zero"]
+
+        subgraph FE["Frontend - grc-copilot-ui - Next.js 16"]
+            LOGINP["Login Page\nGoogle Sign-In\nwindow.location.href post-login\nbypasses Next.js RSC prefetch cache"]
+            APIC["API Client\nBearer token on every request\napiDownload for xlsx exports"]
+            PGAP["Gap Assessment Page\nOSCAL SSP URL input\nOptional CVE toggle\nResults grid + Export xlsx"]
+            PPOAM["POA&M Page\nGenerate + Edit + Export xlsx"]
+        end
+
+        subgraph BE["Backend - grc-copilot-api - FastAPI - Python 3.12 - timeout 900s"]
+            AUTHMW["Auth Middleware\nOPTIONS bypass for CORS preflight\nFirebase token verification\nEmail domain restriction"]
+
+            subgraph GAPENG["Gap Assessment - routes/gap.py"]
+                SSPP["SSP Parser\nFetch OSCAL SSP from URL\nHandles OSCAL 1.0 dict format\nand OSCAL 1.1 array format"]
+                NVDC["NVD Client\nCVE lookup by CPE\nOptional - user toggled"]
+                PREFILTER["Pre-filter\ninherited / not-applicable / planned\nno LLM call needed"]
+                ASSESS["LLM Assessment\nvs NIST 800-53 catalog objectives\n+ CVE evidence"]
+            end
+
+            subgraph POAMENG["POA&M - routes/poam.py"]
+                PGAPQ["Filter gaps\nNot Implemented + Partially Implemented + Planned\nskip Inherited and N/A"]
+                PDRAFT["LLM Draft per gap\nWeakness + Risk Level\nRemediation + 30/60/90-day milestones"]
+            end
+
+            subgraph LLM["LLM Abstraction - llm/client.py\nSwap via LLM_VENDOR env var - no code change"]
+                LANT["Anthropic\nclaude-haiku-4-5 for classify\nclaude-sonnet-4-6 for draft\nMessage Batches API"]
+                LOAI["OpenAI - Active\ngpt-4.1-mini for classify\ngpt-4.1 for draft"]
+                LVERT["Vertex AI\nClaude on GCP\nus-east5 region"]
+                LGEM["Gemini\nflash for classify\npro for draft"]
+            end
+
+            EXPORTR["Export\nopenpyxl xlsx\nAuthenticated GET endpoint"]
+        end
+    end
+
+    subgraph CSQL["Cloud SQL - PostgreSQL\ngrc-copilot-db\nPause with activation-policy NEVER"]
+        TBL["projects\ncontrols\ngaps\npoam_items\nproject_odps"]
+    end
+
+    %% CI/CD
+    DEV -->|"gcloud builds submit"| GH
+    GH --> BB
+    GH --> FB
+    SM -->|"injected at build"| FB
+    SM -->|"set-secrets at deploy"| BD
+    SM -->|"set-secrets at deploy"| FD
+    BB --> IMGS --> BD
+    FB --> IMGS --> FD
+
+    %% Auth
+    PGAP -->|"Sign in with Google"| GAUTH
+    GAUTH --> FTOKEN --> LOGINP --> PGAP
+    APIC -->|"Authorization: Bearer"| AUTHMW
+
+    %% Gap flow
+    PGAP -->|"POST ssp_url"| SSPP
+    SSPP --> NVDC
+    SSPP --> PREFILTER --> ASSESS
+    ASSESS --> LOAI
+    ASSESS --> LANT
+    ASSESS --> LVERT
+    ASSESS --> LGEM
+    GAPENG --> CSQL
+
+    %% POA&M flow
+    PPOAM --> PGAPQ
+    PGAPQ --> CSQL
+    PGAPQ --> PDRAFT
+    PDRAFT --> LOAI
+    PDRAFT --> LANT
+    PDRAFT --> LVERT
+    PDRAFT --> LGEM
+
+    %% Export
+    PGAP -->|"apiDownload"| EXPORTR
+    PPOAM -->|"apiDownload"| EXPORTR
+    EXPORTR --> CSQL
+
+    %% Infrastructure
+    BE --> CSQL
+
+    %% ── Colours ──
+    classDef github    fill:#24292e,stroke:#24292e,color:#fff
+    classDef cicd      fill:#1a73e8,stroke:#1565c0,color:#fff
+    classDef secrets   fill:#e37400,stroke:#b35a00,color:#fff
+    classDef registry  fill:#1a73e8,stroke:#1565c0,color:#fff
+    classDef firebase  fill:#f57c00,stroke:#e65100,color:#fff
+    classDef frontend  fill:#0d47a1,stroke:#0a3276,color:#fff
+    classDef backend   fill:#1b5e20,stroke:#145218,color:#fff
+    classDef gap       fill:#2e7d32,stroke:#1b5e20,color:#fff
+    classDef poam      fill:#4a148c,stroke:#380e6e,color:#fff
+    classDef llm       fill:#880e4f,stroke:#6a0b3d,color:#fff
+    classDef database  fill:#37474f,stroke:#263238,color:#fff
+    classDef dev       fill:#546e7a,stroke:#37474f,color:#fff
+
+    class DEV dev
+    class REPO github
+    class BB,FB,BD,FD cicd
+    class KEYS secrets
+    class IMGS registry
+    class GAUTH,FTOKEN firebase
+    class LOGINP,APIC,PGAP,PPOAM frontend
+    class AUTHMW,EXPORTR backend
+    class SSPP,NVDC,PREFILTER,ASSESS gap
+    class PGAPQ,PDRAFT poam
+    class LANT,LOAI,LVERT,LGEM llm
+    class TBL database

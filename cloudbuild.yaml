@@ -58,22 +58,19 @@ steps:
   # ── Frontend ─────────────────────────────────────────────────────────────────
   - name: "gcr.io/cloud-builders/docker"
     id: build-frontend
+    entrypoint: bash
     secretEnv: ["FIREBASE_API_KEY"]
     args:
-      - build
-      - -t
-      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:$COMMIT_SHA"
-      - -t
-      - "${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:latest"
-      - --build-arg
-      - NEXT_PUBLIC_API_URL=https://${_BACKEND_SVC}-${_HASH}.${_REGION}.run.app/api
-      - --build-arg
-      - NEXT_PUBLIC_FIREBASE_PROJECT_ID=${_GCP_PROJECT}
-      - --build-arg
-      - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${_GCP_PROJECT}.firebaseapp.com
-      - --build-arg
-      - NEXT_PUBLIC_FIREBASE_API_KEY=$$FIREBASE_API_KEY
-      - ./frontend
+      - -c
+      - |
+        docker build \
+          -t ${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:$COMMIT_SHA \
+          -t ${_REGION}-docker.pkg.dev/${_GCP_PROJECT}/${_REPO}/frontend:latest \
+          --build-arg NEXT_PUBLIC_API_URL=https://${_BACKEND_SVC}-${_HASH}.${_REGION}.run.app/api \
+          --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=${_GCP_PROJECT} \
+          --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${_GCP_PROJECT}.firebaseapp.com \
+          --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=$$FIREBASE_API_KEY \
+          ./frontend
 
   - name: "gcr.io/cloud-builders/docker"
     id: push-frontend

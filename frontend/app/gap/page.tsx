@@ -5,21 +5,21 @@ import { useSearchParams } from "next/navigation";
 import { api, apiDownload, type Project, type GapRow } from "@/lib/api";
 
 const STATUS_COLORS: Record<string, string> = {
-  "Implemented":          "bg-green-100 text-green-700",
-  "Partially Implemented":"bg-amber-100 text-amber-700",
-  "Not Implemented":      "bg-red-100 text-red-700",
-  "Inherited":            "bg-blue-100 text-blue-700",
-  "Not Applicable":       "bg-gray-100 text-gray-500",
-  "Planned":              "bg-purple-100 text-purple-700",
+  "Implemented":           "bg-[#DCF0E2] text-[#2A6040]",
+  "Partially Implemented": "bg-[#F5EDD4] text-[#8A6020]",
+  "Not Implemented":       "bg-[#F0DADA] text-[#8A2828]",
+  "Inherited":             "bg-[#DAE3F0] text-[#2A4A8A]",
+  "Not Applicable":        "bg-[#EAEAE8] text-[#5A5A58]",
+  "Planned":               "bg-[#E8D8F0] text-[#6A2A8A]",
 };
 
 const STATUS_BAR: Record<string, string> = {
-  "Implemented":          "bg-green-500",
-  "Partially Implemented":"bg-amber-400",
-  "Not Implemented":      "bg-red-500",
-  "Inherited":            "bg-blue-400",
-  "Not Applicable":       "bg-gray-300",
-  "Planned":              "bg-purple-400",
+  "Implemented":           "bg-[#5C9A6E]",
+  "Partially Implemented": "bg-[#C4963A]",
+  "Not Implemented":       "bg-[#C45A5A]",
+  "Inherited":             "bg-[#5A7AC4]",
+  "Not Applicable":        "bg-[#C0BDB8]",
+  "Planned":               "bg-[#9A5AC4]",
 };
 
 function GapPageInner() {
@@ -102,71 +102,58 @@ function GapPageInner() {
     inherited: gaps.filter((g) => g.gap_status === "Inherited").length,
     na:        gaps.filter((g) => g.gap_status === "Not Applicable").length,
     planned:   gaps.filter((g) => g.gap_status === "Planned").length,
-    inScope:   gaps.filter((g) => !["Inherited","Not Applicable"].includes(g.gap_status)).length,
+    inScope:   gaps.filter((g) => !["Inherited", "Not Applicable"].includes(g.gap_status)).length,
   };
 
   const project = projects.find((p) => p.id === selected);
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-end justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold">Gap Assessment</h1>
-          <p className="text-sm text-gray-500 mt-1">Assess FedRAMP OSCAL SSP + NVD CVE data against NIST 800-53 baseline</p>
+          <h1 className="font-serif text-4xl text-[#1A1916]">Gap Assessment</h1>
+          <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#ACA9A4] mt-2">OSCAL SSP · NIST 800-53 · NVD CVE</p>
         </div>
         {selected && gaps.length > 0 && (
           <div className="flex gap-2">
-            <button onClick={() => apiDownload(`/export/projects/${selected}/gap`, "gap-assessment.xlsx")} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">Export Gap .xlsx</button>
-            <button onClick={() => apiDownload(`/export/projects/${selected}/evidence-request?gaps_only=true`, "evidence-request.xlsx")} className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700">Evidence Request .xlsx</button>
+            <button onClick={() => apiDownload(`/export/projects/${selected}/gap`, "gap-assessment.xlsx")} className={btnOut}>Export Gap .xlsx</button>
+            <button onClick={() => apiDownload(`/export/projects/${selected}/evidence-request?gaps_only=true`, "evidence-request.xlsx")} className={btnOut}>Evidence Request .xlsx</button>
           </div>
         )}
       </div>
 
       {/* Config panel */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6 space-y-4">
+      <div className="bg-white border border-[#E5E0D8] rounded-xl p-5 mb-6 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Project</label>
-            <select
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={selected}
-              onChange={(e) => setSelected(e.target.value)}
-            >
+            <label className="block font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] mb-1.5">Project</label>
+            <select className={inp} value={selected} onChange={(e) => setSelected(e.target.value)}>
               <option value="">Select a project...</option>
               {projects.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.baseline})</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">FedRAMP OSCAL SSP URL</label>
-            <input
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="https://raw.githubusercontent.com/..."
-              value={sspUrl}
-              onChange={(e) => setSspUrl(e.target.value)}
-            />
+            <label className="block font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] mb-1.5">FedRAMP OSCAL SSP URL</label>
+            <input className={inp} placeholder="https://raw.githubusercontent.com/..." value={sspUrl} onChange={(e) => setSspUrl(e.target.value)} />
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs text-[#6B6762] cursor-pointer">
             <input type="checkbox" checked={fetchCves} onChange={(e) => setFetchCves(e.target.checked)} className="rounded" />
             Query NVD for CVEs (adds ~30s per component)
           </label>
-          <button
-            onClick={handleAssess}
-            disabled={running || !selected || !sspUrl.trim()}
-            className="px-5 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 disabled:opacity-50"
-          >
+          <button onClick={handleAssess} disabled={running || !selected || !sspUrl.trim()} className={btn}>
             {running ? "Running assessment..." : "Run Gap Assessment"}
           </button>
         </div>
         {running && (
-          <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 px-4 py-3 rounded-lg">
-            <span className="animate-spin inline-block w-4 h-4 border-2 border-amber-600 border-t-transparent rounded-full" />
+          <div className="flex items-center gap-2 text-xs text-[#8A6020] bg-[#F5EDD4] px-4 py-3 rounded-md font-mono">
+            <span className="animate-spin inline-block w-3 h-3 border-2 border-[#8A6020] border-t-transparent rounded-full" />
             Assessing {project?.baseline} baseline controls against SSP and NVD data...
           </div>
         )}
-        {msg && <div className="text-sm text-green-700 bg-green-50 px-4 py-2 rounded-lg">{msg}</div>}
-        {error && <div className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">{error}</div>}
+        {msg   && <div className="text-xs text-[#2A6040] bg-[#DCF0E2] px-4 py-2 rounded-md font-mono">{msg}</div>}
+        {error && <div className="text-xs text-[#8A2828] bg-[#F0DADA] px-4 py-2 rounded-md font-mono">{error}</div>}
       </div>
 
       {gaps.length > 0 && (
@@ -174,23 +161,23 @@ function GapPageInner() {
           {/* Summary stats */}
           <div className="grid grid-cols-7 gap-3 mb-6">
             {[
-              { label: "Total",        value: summary.total,     color: "text-gray-900" },
-              { label: "In Scope",     value: summary.inScope,   color: "text-gray-700" },
-              { label: "Implemented",  value: summary.impl,      color: "text-green-700" },
-              { label: "Partial",      value: summary.partial,   color: "text-amber-600" },
-              { label: "Not Impl.",    value: summary.notImpl,   color: "text-red-600" },
-              { label: "Inherited",    value: summary.inherited, color: "text-blue-600" },
-              { label: "N/A",          value: summary.na,        color: "text-gray-400" },
+              { label: "Total",       value: summary.total,     color: "text-[#1A1916]" },
+              { label: "In Scope",    value: summary.inScope,   color: "text-[#1A1916]" },
+              { label: "Implemented", value: summary.impl,      color: "text-[#2A6040]" },
+              { label: "Partial",     value: summary.partial,   color: "text-[#8A6020]" },
+              { label: "Not Impl.",   value: summary.notImpl,   color: "text-[#8A2828]" },
+              { label: "Inherited",   value: summary.inherited, color: "text-[#2A4A8A]" },
+              { label: "N/A",         value: summary.na,        color: "text-[#5A5A58]" },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-3 text-center shadow-sm">
-                <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-                <p className="text-xs text-gray-500 mt-1">{s.label}</p>
+              <div key={s.label} className="bg-white border border-[#E5E0D8] rounded-xl p-3 text-center">
+                <p className={`font-serif text-2xl ${s.color}`}>{s.value}</p>
+                <p className="font-mono text-[9px] tracking-[0.15em] uppercase text-[#ACA9A4] mt-1">{s.label}</p>
               </div>
             ))}
           </div>
 
           {/* Status bar */}
-          <div className="flex h-2 rounded-full overflow-hidden mb-6 bg-gray-100">
+          <div className="flex h-1.5 rounded-full overflow-hidden mb-6 bg-[#E5E0D8]">
             {(["Implemented","Partially Implemented","Not Implemented","Inherited","Not Applicable","Planned"] as const).map((s) => {
               const count = gaps.filter((g) => g.gap_status === s).length;
               const pct = summary.total ? (count / summary.total) * 100 : 0;
@@ -201,66 +188,63 @@ function GapPageInner() {
           {/* Filters */}
           <div className="flex gap-3 mb-4 flex-wrap">
             <input
-              className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
+              className="px-3 py-2 text-sm text-[#1A1916] border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916] w-52 placeholder:text-[#C8C5C0]"
               placeholder="Search controls..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <select className="px-3 py-2 text-sm text-[#1A1916] border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916]" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               {statuses.map((s) => <option key={s}>{s}</option>)}
             </select>
-            <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value={familyFilter} onChange={(e) => setFamilyFilter(e.target.value)}>
+            <select className="px-3 py-2 text-sm text-[#1A1916] border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916]" value={familyFilter} onChange={(e) => setFamilyFilter(e.target.value)}>
               {families.map((f) => <option key={f}>{f}</option>)}
             </select>
           </div>
 
           {/* Gap table */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 w-24">Control</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Title</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 w-36">Status</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Rationale</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 w-32">CVEs</th>
+                <tr className="bg-[#F7F5F0] border-b border-[#E5E0D8]">
+                  <th className="text-left px-4 py-3 font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] w-24">Control</th>
+                  <th className="text-left px-4 py-3 font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4]">Title</th>
+                  <th className="text-left px-4 py-3 font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] w-40">Status</th>
+                  <th className="text-left px-4 py-3 font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4]">Rationale</th>
+                  <th className="text-left px-4 py-3 font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] w-32">CVEs</th>
                   <th className="w-8" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#E5E0D8]">
                 {filtered.map((g) => (
                   <React.Fragment key={g.id}>
-                    <tr
-                      className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => setExpanded(expanded === g.id ? null : g.id)}
-                    >
-                      <td className="px-4 py-3 font-mono text-xs font-medium text-blue-700">{g.control_id.toUpperCase()}</td>
-                      <td className="px-4 py-3 text-xs text-gray-700">{g.title}</td>
+                    <tr className="hover:bg-[#F7F5F0] cursor-pointer transition-colors" onClick={() => setExpanded(expanded === g.id ? null : g.id)}>
+                      <td className="px-4 py-3 font-mono text-xs font-medium text-[#1A1916]">{g.control_id.toUpperCase()}</td>
+                      <td className="px-4 py-3 text-xs text-[#6B6762]">{g.title}</td>
                       <td className="px-4 py-3">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[g.gap_status] ?? "bg-gray-100 text-gray-500"}`}>
+                        <span className={`inline-block px-2 py-0.5 rounded font-mono text-[10px] font-medium ${STATUS_COLORS[g.gap_status] ?? "bg-[#EAEAE8] text-[#5A5A58]"}`}>
                           {g.gap_status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-gray-600 max-w-xs truncate">{g.rationale}</td>
+                      <td className="px-4 py-3 text-xs text-[#6B6762]">{g.rationale}</td>
                       <td className="px-4 py-3">
                         {g.cve_refs.length > 0 ? (
-                          <span className="text-xs font-mono text-red-600">{g.cve_refs.slice(0, 2).join(", ")}{g.cve_refs.length > 2 ? ` +${g.cve_refs.length - 2}` : ""}</span>
-                        ) : <span className="text-xs text-gray-300">—</span>}
+                          <span className="font-mono text-[10px] text-[#8A2828]">{g.cve_refs.slice(0, 2).join(", ")}{g.cve_refs.length > 2 ? ` +${g.cve_refs.length - 2}` : ""}</span>
+                        ) : <span className="font-mono text-[10px] text-[#C8C5C0]">—</span>}
                       </td>
-                      <td className="px-4 py-3 text-gray-400 text-xs">{expanded === g.id ? "▲" : "▼"}</td>
+                      <td className="px-4 py-3 text-[#ACA9A4] font-mono text-[10px]">{expanded === g.id ? "▲" : "▼"}</td>
                     </tr>
                     {expanded === g.id && g.objective_findings.length > 0 && (
-                      <tr className="bg-gray-50">
-                        <td colSpan={6} className="px-8 py-3">
-                          <p className="text-xs font-semibold text-gray-600 mb-2">Assessment Objectives</p>
-                          <div className="space-y-1">
+                      <tr className="bg-[#F7F5F0]">
+                        <td colSpan={6} className="px-8 py-4">
+                          <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] mb-3">Assessment Objectives</p>
+                          <div className="space-y-1.5">
                             {g.objective_findings.map((f, i) => (
                               <div key={i} className="flex gap-3 text-xs">
-                                <span className={`w-16 shrink-0 font-medium ${f.met === "MET" ? "text-green-600" : f.met === "PARTIAL" ? "text-amber-600" : "text-red-600"}`}>
+                                <span className={`font-mono text-[10px] w-16 shrink-0 font-medium ${f.met === "MET" ? "text-[#2A6040]" : f.met === "PARTIAL" ? "text-[#8A6020]" : "text-[#8A2828]"}`}>
                                   {f.met}
                                 </span>
-                                <span className="text-gray-600">{f.objective}</span>
-                                {f.note && <span className="text-gray-400 italic">— {f.note}</span>}
+                                <span className="text-[#6B6762]">{f.objective}</span>
+                                {f.note && <span className="text-[#ACA9A4] italic">— {f.note}</span>}
                               </div>
                             ))}
                           </div>
@@ -271,6 +255,9 @@ function GapPageInner() {
                 ))}
               </tbody>
             </table>
+            {filtered.length === 0 && (
+              <p className="text-center font-mono text-xs text-[#ACA9A4] py-10 tracking-wide">No controls found.</p>
+            )}
           </div>
         </>
       )}
@@ -285,3 +272,7 @@ export default function GapPage() {
     </Suspense>
   );
 }
+
+const btn    = "px-4 py-2 bg-[#1A1916] text-white text-xs font-medium rounded-md hover:bg-[#2A2926] disabled:opacity-40 transition-colors";
+const btnOut = "px-4 py-2 border border-[#E5E0D8] text-[#6B6762] text-xs font-medium rounded-md hover:border-[#1A1916] hover:text-[#1A1916] transition-colors";
+const inp    = "w-full px-3 py-2 text-sm text-[#1A1916] bg-white border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916] focus:border-[#1A1916] transition-colors placeholder:text-[#C8C5C0]";

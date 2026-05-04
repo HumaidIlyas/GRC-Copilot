@@ -5,15 +5,15 @@ import { useSearchParams } from "next/navigation";
 import { api, apiDownload, type Project, type PoamItem } from "@/lib/api";
 
 const RISK_COLORS: Record<string, string> = {
-  High:   "bg-red-100 text-red-700",
-  Medium: "bg-amber-100 text-amber-700",
-  Low:    "bg-green-100 text-green-700",
+  High:   "bg-[#F0DADA] text-[#8A2828]",
+  Medium: "bg-[#F5EDD4] text-[#8A6020]",
+  Low:    "bg-[#DCF0E2] text-[#2A6040]",
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  open:        "bg-red-50 text-red-600",
-  in_progress: "bg-amber-50 text-amber-600",
-  closed:      "bg-green-50 text-green-600",
+  open:        "bg-[#F0DADA] text-[#8A2828]",
+  in_progress: "bg-[#F5EDD4] text-[#8A6020]",
+  closed:      "bg-[#DCF0E2] text-[#2A6040]",
 };
 
 function PoamPageInner() {
@@ -89,23 +89,19 @@ function PoamPageInner() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-end justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold">POA&amp;M Generator</h1>
-          <p className="text-sm text-gray-500 mt-1">Plan of Action &amp; Milestones from gap findings</p>
+          <h1 className="font-serif text-4xl text-[#1A1916]">POA&amp;M Generator</h1>
+          <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#ACA9A4] mt-2">Plan of Action &amp; Milestones</p>
         </div>
         <div className="flex gap-2">
           {selected && (
             <>
-              <button
-                onClick={handleGenerate}
-                disabled={generating}
-                className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:opacity-50"
-              >
+              <button onClick={handleGenerate} disabled={generating} className={btn}>
                 {generating ? "Generating..." : items.length > 0 ? "Re-generate" : "Generate POA&M"}
               </button>
               {items.length > 0 && (
-                <button onClick={() => apiDownload(`/export/projects/${selected}/poam`, "poam.xlsx")} className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
+                <button onClick={() => apiDownload(`/export/projects/${selected}/poam`, "poam.xlsx")} className={btnOut}>
                   Export .xlsx
                 </button>
               )}
@@ -115,24 +111,20 @@ function PoamPageInner() {
       </div>
 
       {/* Project selector */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6 flex gap-4 items-center">
-        <label className="text-sm font-medium text-gray-700">Project</label>
-        <select
-          className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={selected}
-          onChange={(e) => setSelected(e.target.value)}
-        >
+      <div className="bg-white border border-[#E5E0D8] rounded-xl p-4 mb-6 flex gap-4 items-center">
+        <label className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] whitespace-nowrap">Project</label>
+        <select className={inp} value={selected} onChange={(e) => setSelected(e.target.value)}>
           <option value="">Select a project...</option>
           {projects.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.baseline})</option>)}
         </select>
-        {items.length > 0 && <span className="text-xs text-gray-400">{items.length} items · {summary.open} open</span>}
+        {items.length > 0 && <span className="font-mono text-[10px] text-[#ACA9A4] whitespace-nowrap">{items.length} items · {summary.open} open</span>}
       </div>
 
-      {msg   && <div className="mb-4 px-4 py-2 bg-green-50 text-green-700 text-sm rounded-lg">{msg}</div>}
-      {error && <div className="mb-4 px-4 py-2 bg-red-50 text-red-600 text-sm rounded-lg">{error}</div>}
+      {msg       && <div className="mb-4 px-4 py-2 bg-[#DCF0E2] text-[#2A6040] text-xs rounded-md font-mono">{msg}</div>}
+      {error     && <div className="mb-4 px-4 py-2 bg-[#F0DADA] text-[#8A2828] text-xs rounded-md font-mono">{error}</div>}
       {generating && (
-        <div className="mb-4 flex items-center gap-2 text-sm text-red-700 bg-red-50 px-4 py-3 rounded-lg">
-          <span className="animate-spin inline-block w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full" />
+        <div className="mb-4 flex items-center gap-2 text-xs text-[#8A2828] bg-[#F0DADA] px-4 py-3 rounded-md font-mono">
+          <span className="animate-spin inline-block w-3 h-3 border-2 border-[#8A2828] border-t-transparent rounded-full" />
           Drafting POA&M entries for all gap findings...
         </div>
       )}
@@ -142,24 +134,24 @@ function PoamPageInner() {
           {/* Stats */}
           <div className="grid grid-cols-4 gap-4 mb-6">
             {[
-              { label: "High Risk",   value: summary.high,   color: "text-red-600" },
-              { label: "Medium Risk", value: summary.medium, color: "text-amber-600" },
-              { label: "Low Risk",    value: summary.low,    color: "text-green-700" },
-              { label: "Open Items",  value: summary.open,   color: "text-gray-900" },
+              { label: "High Risk",   value: summary.high,   color: "text-[#8A2828]" },
+              { label: "Medium Risk", value: summary.medium, color: "text-[#8A6020]" },
+              { label: "Low Risk",    value: summary.low,    color: "text-[#2A6040]" },
+              { label: "Open Items",  value: summary.open,   color: "text-[#1A1916]" },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
-                <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
-                <p className="text-xs text-gray-500 mt-1">{s.label}</p>
+              <div key={s.label} className="bg-white border border-[#E5E0D8] rounded-xl p-4 text-center">
+                <p className={`font-serif text-3xl ${s.color}`}>{s.value}</p>
+                <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] mt-1">{s.label}</p>
               </div>
             ))}
           </div>
 
           {/* Filters */}
           <div className="flex gap-3 mb-4">
-            <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value={riskFilter} onChange={(e) => setRiskFilter(e.target.value)}>
+            <select className="px-3 py-2 text-sm text-[#1A1916] border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916]" value={riskFilter} onChange={(e) => setRiskFilter(e.target.value)}>
               {["All", "High", "Medium", "Low"].map((r) => <option key={r}>{r}</option>)}
             </select>
-            <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <select className="px-3 py-2 text-sm text-[#1A1916] border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916]" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               {["All", "open", "in_progress", "closed"].map((s) => <option key={s}>{s}</option>)}
             </select>
           </div>
@@ -167,24 +159,24 @@ function PoamPageInner() {
           {/* Items */}
           <div className="space-y-3">
             {filtered.map((item, idx) => (
-              <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+              <div key={item.id} className="bg-white border border-[#E5E0D8] rounded-xl p-5">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-gray-400">POA&M-{String(idx + 1).padStart(3, "0")}</span>
-                    <span className="font-mono text-xs font-medium text-blue-700">{item.control_id.toUpperCase()}</span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${RISK_COLORS[item.risk_level] ?? "bg-gray-100 text-gray-600"}`}>{item.risk_level}</span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[item.status] ?? "bg-gray-100 text-gray-600"}`}>{item.status}</span>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="font-mono text-[10px] tracking-wide text-[#ACA9A4]">POA&M-{String(idx + 1).padStart(3, "0")}</span>
+                    <span className="font-mono text-xs font-medium text-[#1A1916]">{item.control_id.toUpperCase()}</span>
+                    <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-medium ${RISK_COLORS[item.risk_level] ?? "bg-[#EAEAE8] text-[#5A5A58]"}`}>{item.risk_level}</span>
+                    <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-medium ${STATUS_COLORS[item.status] ?? "bg-[#EAEAE8] text-[#5A5A58]"}`}>{item.status}</span>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     {editingId === item.id ? (
                       <>
-                        <button onClick={() => setEditingId(null)} className="px-3 py-1 text-xs text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-                        <button onClick={() => handleSave(item)} disabled={saving} className="px-3 py-1 text-xs text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50">Save</button>
+                        <button onClick={() => setEditingId(null)} className="px-3 py-1 font-mono text-[10px] text-[#ACA9A4] border border-[#E5E0D8] rounded-md hover:text-[#6B6762] transition-colors">Cancel</button>
+                        <button onClick={() => handleSave(item)} disabled={saving} className="px-3 py-1 font-mono text-[10px] text-white bg-[#1A1916] rounded-md hover:bg-[#2A2926] disabled:opacity-40 transition-colors">Save</button>
                       </>
                     ) : (
                       <button
                         onClick={() => { setEditingId(item.id); setEditData({ weakness_description: item.weakness_description, risk_level: item.risk_level, remediation_steps: item.remediation_steps, milestones: item.milestones, status: item.status }); }}
-                        className="px-3 py-1 text-xs text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50"
+                        className="px-3 py-1 font-mono text-[10px] text-[#6B6762] border border-[#E5E0D8] rounded-md hover:border-[#1A1916] hover:text-[#1A1916] transition-colors"
                       >
                         Edit
                       </button>
@@ -195,18 +187,18 @@ function PoamPageInner() {
                 {editingId === item.id ? (
                   <div className="mt-4 space-y-3">
                     <div>
-                      <label className="text-xs font-medium text-gray-600 block mb-1">Weakness Description</label>
+                      <label className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] block mb-1.5">Weakness Description</label>
                       <textarea className={ta} value={editData.weakness_description ?? ""} onChange={(e) => setEditData({ ...editData, weakness_description: e.target.value })} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-medium text-gray-600 block mb-1">Risk Level</label>
+                        <label className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] block mb-1.5">Risk Level</label>
                         <select className={sel} value={editData.risk_level ?? "Medium"} onChange={(e) => setEditData({ ...editData, risk_level: e.target.value })}>
                           <option>High</option><option>Medium</option><option>Low</option>
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs font-medium text-gray-600 block mb-1">Status</label>
+                        <label className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] block mb-1.5">Status</label>
                         <select className={sel} value={editData.status ?? "open"} onChange={(e) => setEditData({ ...editData, status: e.target.value })}>
                           <option value="open">open</option>
                           <option value="in_progress">in_progress</option>
@@ -215,30 +207,30 @@ function PoamPageInner() {
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-gray-600 block mb-1">Remediation Steps</label>
+                      <label className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] block mb-1.5">Remediation Steps</label>
                       <textarea className={ta} value={editData.remediation_steps ?? ""} onChange={(e) => setEditData({ ...editData, remediation_steps: e.target.value })} />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-gray-600 block mb-1">Milestones</label>
+                      <label className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] block mb-1.5">Milestones</label>
                       <textarea className={`${ta} h-16`} value={editData.milestones ?? ""} onChange={(e) => setEditData({ ...editData, milestones: e.target.value })} />
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-3 grid grid-cols-3 gap-4">
-                    <div className="col-span-1">
-                      <p className="text-xs font-medium text-gray-500 mb-1">Weakness</p>
-                      <p className="text-xs text-gray-700">{item.weakness_description}</p>
+                  <div className="mt-4 grid grid-cols-3 gap-4 pt-4 border-t border-[#E5E0D8]">
+                    <div>
+                      <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] mb-1.5">Weakness</p>
+                      <p className="text-xs text-[#6B6762]">{item.weakness_description}</p>
                       {JSON.parse(item.cve_refs || "[]").length > 0 && (
-                        <p className="text-xs text-red-600 font-mono mt-1">{JSON.parse(item.cve_refs).slice(0,3).join(", ")}</p>
+                        <p className="font-mono text-[10px] text-[#8A2828] mt-1.5">{JSON.parse(item.cve_refs).slice(0, 3).join(", ")}</p>
                       )}
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Remediation Steps</p>
-                      <p className="text-xs text-gray-700 whitespace-pre-line">{item.remediation_steps}</p>
+                      <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] mb-1.5">Remediation Steps</p>
+                      <p className="text-xs text-[#6B6762] whitespace-pre-line">{item.remediation_steps}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Milestones</p>
-                      <p className="text-xs text-gray-700 whitespace-pre-line">{item.milestones}</p>
+                      <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4] mb-1.5">Milestones</p>
+                      <p className="text-xs text-[#6B6762] whitespace-pre-line">{item.milestones}</p>
                     </div>
                   </div>
                 )}
@@ -249,10 +241,10 @@ function PoamPageInner() {
       )}
 
       {selected && items.length === 0 && !generating && (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
-          <p className="text-gray-500 mb-2">No POA&M entries yet.</p>
-          <p className="text-xs text-gray-400 mb-4">Run gap assessment first, then generate POA&M from the findings.</p>
-          <button onClick={handleGenerate} className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700">Generate POA&M</button>
+        <div className="border border-dashed border-[#E5E0D8] rounded-xl p-12 text-center">
+          <p className="text-sm text-[#6B6762] mb-2">No POA&M entries yet.</p>
+          <p className="font-mono text-[10px] text-[#ACA9A4] mb-4 tracking-wide">Run gap assessment first, then generate POA&M from the findings.</p>
+          <button onClick={handleGenerate} className={btn}>Generate POA&M</button>
         </div>
       )}
     </div>
@@ -267,5 +259,8 @@ export default function PoamPage() {
   );
 }
 
-const ta  = "w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-20 resize-none";
-const sel = "w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
+const btn    = "px-4 py-2 bg-[#1A1916] text-white text-xs font-medium rounded-md hover:bg-[#2A2926] disabled:opacity-40 transition-colors";
+const btnOut = "px-4 py-2 border border-[#E5E0D8] text-[#6B6762] text-xs font-medium rounded-md hover:border-[#1A1916] hover:text-[#1A1916] transition-colors";
+const inp    = "w-full px-3 py-2 text-sm text-[#1A1916] bg-white border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916] focus:border-[#1A1916] transition-colors placeholder:text-[#C8C5C0]";
+const ta     = "w-full px-3 py-2 text-xs text-[#1A1916] border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916] h-20 resize-none";
+const sel    = "w-full px-3 py-2 text-xs text-[#1A1916] border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916]";

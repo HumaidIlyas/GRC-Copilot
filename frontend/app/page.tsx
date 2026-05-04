@@ -25,7 +25,6 @@ export default function Dashboard() {
     setError("");
     try {
       const { id } = await api.createProject(form);
-      // Auto-initialize ODPs for the new project
       await api.initODPs(id).catch(() => {});
       const updated = await api.listProjects();
       setProjects(updated);
@@ -40,62 +39,61 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-end justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-sm text-gray-500 mt-1">NIST 800-53 compliance assessments</p>
+          <h1 className="font-serif text-4xl text-[#1A1916]">Projects</h1>
+          <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#ACA9A4] mt-2">NIST 800-53 Compliance Assessments</p>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-        >
+        <button onClick={() => setShowForm(true)} className={btn}>
           New Project
         </button>
       </div>
 
       {/* Feature cards */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-3 gap-4 mb-10">
         {[
-          { title: "SSP Assistant", desc: "Draft control implementation statements", href: "/ssp", color: "bg-blue-600" },
-          { title: "Gap Assessment", desc: "Assess your SSP + CVE data against the baseline", href: "/gap", color: "bg-amber-600" },
-          { title: "POA&M Generator", desc: "Draft plan of action from gap findings", href: "/poam", color: "bg-red-600" },
+          { num: "01", title: "SSP Assistant",    desc: "Draft control implementation statements",      href: "/ssp" },
+          { num: "02", title: "Gap Assessment",    desc: "Assess your SSP + CVE data against the baseline", href: "/gap" },
+          { num: "03", title: "POA&M Generator",  desc: "Draft plan of action from gap findings",      href: "/poam" },
         ].map((f) => (
-          <Link key={f.href} href={f.href} className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition">
-            <div className={`w-8 h-8 rounded-md ${f.color} mb-3`} />
-            <h2 className="font-semibold text-gray-900 mb-1">{f.title}</h2>
-            <p className="text-xs text-gray-500">{f.desc}</p>
+          <Link key={f.href} href={f.href} className="block bg-white border border-[#E5E0D8] rounded-xl p-5 hover:border-[#1A1916] transition-colors group">
+            <p className="font-mono text-[10px] tracking-widest text-[#ACA9A4] mb-3 group-hover:text-[#6B6762] transition-colors">{f.num}</p>
+            <h2 className="font-serif text-lg text-[#1A1916] mb-1">{f.title}</h2>
+            <p className="text-xs text-[#6B6762]">{f.desc}</p>
           </Link>
         ))}
       </div>
 
       {/* Project list */}
       {loading ? (
-        <p className="text-sm text-gray-400">Loading projects...</p>
+        <p className="font-mono text-xs text-[#ACA9A4] tracking-wide">Loading...</p>
       ) : projects.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
-          <p className="text-gray-500 mb-4">No projects yet. Create one to get started.</p>
-          <button onClick={() => setShowForm(true)} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
-            Create Project
-          </button>
+        <div className="border border-dashed border-[#E5E0D8] rounded-xl p-12 text-center">
+          <p className="text-sm text-[#6B6762] mb-4">No projects yet. Create one to get started.</p>
+          <button onClick={() => setShowForm(true)} className={btn}>Create Project</button>
         </div>
       ) : (
-        <div className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden shadow-sm">
-          {projects.map((p) => (
-            <div key={p.id} className="flex items-center justify-between px-5 py-4 hover:bg-gray-50">
+        <div className="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden">
+          <div className="px-5 py-3 border-b border-[#E5E0D8] bg-[#F7F5F0] flex items-center justify-between">
+            <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4]">Project</span>
+            <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#ACA9A4]">Actions</span>
+          </div>
+          {projects.map((p, i) => (
+            <div key={p.id} className={`flex items-center justify-between px-5 py-4 hover:bg-[#F7F5F0] transition-colors ${i > 0 ? "border-t border-[#E5E0D8]" : ""}`}>
               <div>
-                <p className="font-medium text-gray-900">{p.name}</p>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {p.baseline} baseline · {p.data_classification} · {new Date(p.created_at).toLocaleDateString()}
+                <p className="text-sm font-medium text-[#1A1916]">{p.name}</p>
+                <p className="font-mono text-[10px] text-[#ACA9A4] mt-0.5 tracking-wide">
+                  {p.baseline} · {p.data_classification} · {new Date(p.created_at).toLocaleDateString()}
                 </p>
               </div>
               <div className="flex gap-2">
                 {[
-                  { label: "SSP", href: `/ssp?project=${p.id}` },
-                  { label: "ODP", href: `/odp?project=${p.id}` },
-                  { label: "Gap", href: `/gap?project=${p.id}` },
+                  { label: "SSP",   href: `/ssp?project=${p.id}` },
+                  { label: "ODP",   href: `/odp?project=${p.id}` },
+                  { label: "Gap",   href: `/gap?project=${p.id}` },
                   { label: "POA&M", href: `/poam?project=${p.id}` },
                 ].map((l) => (
-                  <Link key={l.label} href={l.href} className="px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition">
+                  <Link key={l.label} href={l.href} className="px-2.5 py-1 font-mono text-[10px] tracking-wide border border-[#E5E0D8] rounded text-[#6B6762] hover:border-[#1A1916] hover:text-[#1A1916] transition-colors">
                     {l.label}
                   </Link>
                 ))}
@@ -107,40 +105,43 @@ export default function Dashboard() {
 
       {/* Create project modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-            <div className="px-6 py-5 border-b border-gray-100">
-              <h2 className="text-lg font-semibold">New Project</h2>
+        <div className="fixed inset-0 bg-black/25 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border border-[#E5E0D8] rounded-xl shadow-xl w-full max-w-lg">
+            <div className="px-6 py-5 border-b border-[#E5E0D8] flex items-center justify-between">
+              <h2 className="font-serif text-xl text-[#1A1916]">New Project</h2>
+              <button onClick={() => setShowForm(false)} className="font-mono text-[10px] tracking-widest text-[#ACA9A4] hover:text-[#1A1916] transition-colors uppercase">
+                Esc
+              </button>
             </div>
             <form onSubmit={handleCreate} className="px-6 py-5 space-y-4">
               <Field label="System Name" required>
-                <input className={input} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="e.g. Agency HR System" />
+                <input className={inp} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="e.g. Agency HR System" />
               </Field>
               <Field label="System Description" required>
-                <textarea className={`${input} h-20 resize-none`} value={form.system_description} onChange={(e) => setForm({ ...form, system_description: e.target.value })} required placeholder="What the system does and who uses it" />
+                <textarea className={`${inp} h-20 resize-none`} value={form.system_description} onChange={(e) => setForm({ ...form, system_description: e.target.value })} required placeholder="What the system does and who uses it" />
               </Field>
               <Field label="System Boundary">
-                <input className={input} value={form.system_boundary} onChange={(e) => setForm({ ...form, system_boundary: e.target.value })} placeholder="Network/infrastructure scope" />
+                <input className={inp} value={form.system_boundary} onChange={(e) => setForm({ ...form, system_boundary: e.target.value })} placeholder="Network/infrastructure scope" />
               </Field>
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Data Classification">
-                  <select className={input} value={form.data_classification} onChange={(e) => setForm({ ...form, data_classification: e.target.value })}>
+                  <select className={inp} value={form.data_classification} onChange={(e) => setForm({ ...form, data_classification: e.target.value })}>
                     <option>Low</option><option>Moderate</option><option>High</option>
                   </select>
                 </Field>
                 <Field label="NIST Baseline">
-                  <select className={input} value={form.baseline} onChange={(e) => setForm({ ...form, baseline: e.target.value })}>
+                  <select className={inp} value={form.baseline} onChange={(e) => setForm({ ...form, baseline: e.target.value })}>
                     <option>Low</option><option>Moderate</option><option>High</option>
                   </select>
                 </Field>
               </div>
-              <Field label="FedRAMP OSCAL SSP URL (optional)">
-                <input className={input} value={form.oscal_ssp_url} onChange={(e) => setForm({ ...form, oscal_ssp_url: e.target.value })} placeholder="https://raw.githubusercontent.com/..." />
+              <Field label="FedRAMP OSCAL SSP URL">
+                <input className={inp} value={form.oscal_ssp_url} onChange={(e) => setForm({ ...form, oscal_ssp_url: e.target.value })} placeholder="https://raw.githubusercontent.com/..." />
               </Field>
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p className="text-xs text-red-600 font-mono">{error}</p>}
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50">Cancel</button>
-                <button type="submit" disabled={creating} className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                <button type="button" onClick={() => setShowForm(false)} className={btnOut + " flex-1 py-2"}>Cancel</button>
+                <button type="submit" disabled={creating} className={btn + " flex-1 py-2"}>
                   {creating ? "Creating..." : "Create Project"}
                 </button>
               </div>
@@ -155,12 +156,14 @@ export default function Dashboard() {
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <label className="block font-mono text-[10px] tracking-[0.15em] uppercase text-[#6B6762] mb-1.5">
+        {label}{required && <span className="text-red-400 ml-1">*</span>}
       </label>
       {children}
     </div>
   );
 }
 
-const input = "w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+const btn    = "px-4 py-2 bg-[#1A1916] text-white text-xs font-medium rounded-md hover:bg-[#2A2926] disabled:opacity-40 transition-colors";
+const btnOut = "px-4 py-2 border border-[#E5E0D8] text-[#6B6762] text-xs font-medium rounded-md hover:border-[#1A1916] hover:text-[#1A1916] transition-colors";
+const inp    = "w-full px-3 py-2 text-sm text-[#1A1916] bg-white border border-[#E5E0D8] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1A1916] focus:border-[#1A1916] transition-colors placeholder:text-[#C8C5C0]";
