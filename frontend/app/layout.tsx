@@ -15,7 +15,7 @@ const instrumentSerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   title: "GRC Copilot",
-  description: "NIST 800-53 compliance assistant for GRC analysts",
+  description: "NIST 800-53 FedRAMP compliance assistant for GRC analysts",
 };
 
 const NAV = [
